@@ -1,0 +1,40 @@
+<svg width="30" height="33" viewBox="0 0 30 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="33">
+    <path d="M12.0589 0.945659C13.8053 -0.0626144 15.9569 -0.0626158 17.7033 0.945657L26.94 6.27846C28.6864 7.28674 29.7622 9.1501 29.7622 11.1666V21.8323C29.7622 23.8488 28.6864 25.7122 26.94 26.7204L17.7033 32.0532C15.9569 33.0615 13.8053 33.0615 12.0589 32.0533L2.8222 26.7204C1.07582 25.7122 0 23.8488 0 21.8323V11.1666C0 9.1501 1.07582 7.28674 2.8222 6.27846L12.0589 0.945659Z" fill="#303030"/>
+  </mask>
+  <g mask="url(#mask0)">
+    <!-- Faceted shapes in neon-green gradient -->
+    <path d="M14.877 -0.964844L31.1888 8.45279L22.9339 12.8976L19.5242 11.0377L16.4244 11.3477L8.67499 8.55788L6.81512 11.0377L5.88519 12.2776L4.02533 11.0377L-1.43487 8.45279L14.877 -0.964844Z" fill="url(#grad0)"/>
+    <path d="M-0.128906 8.58677L6.19899 11.6554L9.91871 20.6447L9.91871 20.9547L11.1586 22.5046L16.7382 26.8443L14.8802 34.5833L-0.128907 25.9178L-0.128906 8.58677Z" fill="url(#grad1)"/>
+    <path d="M19.8341 20.9533L23.8638 12.2739L29.886 8.5877L29.886 25.9187L14.8769 34.5843L14.5645 26.8428L19.8341 20.9533Z" fill="url(#grad2)"/>
+    <path d="M14.8763 6.08203C12.3115 6.08203 9.9741 7.05551 8.21323 8.65311L9.6428 20.9608C10.0337 21.1413 12.2759 21.8909 12.7065 21.8909H15.8062C16.3541 21.8909 20.1459 20.7231 20.1459 21.2709L19.8359 19.9689C19.8359 20.5168 19.3919 20.9608 18.844 20.9608H10.9086C10.3608 20.9608 9.91667 20.5168 9.91667 19.9689V15.1669C9.91667 14.7363 9.82323 14.3109 9.6428 13.9198L8.21323 8.65311C6.61563 10.4139 4.95703 13.4365 4.95703 16.0013C4.95703 21.4796 9.39799 25.9206 14.8763 25.9206C20.3546 25.9206 24.7956 21.4796 24.7956 16.0013C24.7956 10.523 20.3546 6.08203 14.8763 6.08203Z" fill="url(#grad3)"/>
+
+    <!-- rotated S, 30° clockwise around center (15,15) -->
+    <!-- <g transform="rotate(25 13 15)">
+      <path d="
+        M15 11  
+        C11.5 11, 11.5 15, 15 15  
+        C18.5 15, 18.5 19, 15 19
+      " stroke="#b0ffa2fa" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g> -->
+  </g>
+
+  <defs>
+    <linearGradient id="grad0" x1="14.5646" y1="0.4985" x2="14.282" y2="11.8208" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00FF00"/>
+      <stop offset="1" stop-color="#008000"/>
+    </linearGradient>
+    <linearGradient id="grad1" x1="14.8783" y1="23.4345" x2="5.9027" y2="12.6728" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00FF00"/>
+      <stop offset="1" stop-color="#008000"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="14.8744" y1="24.673" x2="23.4474" y2="13.2139" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00FF00"/>
+      <stop offset="1" stop-color="#008000"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="14.8763" y1="6.0820" x2="14.8763" y2="25.9206" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00FF00"/>
+      <stop offset="1" stop-color="#008000"/>
+    </linearGradient>
+  </defs>
+</svg>
