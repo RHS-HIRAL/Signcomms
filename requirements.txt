@@ -1,0 +1,12 @@
+flask==2.2.5
+flask-socketio==5.3.4
+eventlet==0.33.3
+flask-cors==3.0.10
+tensorflow==2.11.0
+mediapipe==0.9.1.0
+opencv-python==4.8.0.76
+Pillow==9.5.0
+gTTS==2.3.2
+deep-translator==1.11.4
+numpy==1.23.5
+uuid==1.30
