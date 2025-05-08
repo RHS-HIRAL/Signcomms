@@ -1,12 +1,35 @@
-# React + Vite
+# SignComms
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time sign language recognition and translation app.
 
-Currently, two official plugins are available:
+## Features
+- Real-time hand sign detection (Camera + ML)
+- Text and speech output
+- User authentication (register/login)
+- Modern dark/green UI
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## Expanding the ESLint configuration
+### Backend (Flask)
+```sh
+python -m venv .venv
+source .venv/bin/activate  # or .venv\\Scripts\\activate on Windows
+pip install -r requirements.txt
+python reset_db.py
+python app.py
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend (React)
+```sh
+cd src
+npm install
+npm run dev
+```
+
+## Deployment
+
+- For static frontend: use GitHub Pages or Vercel/Netlify.
+- For backend: deploy to Heroku, Render, or your own server.
+
+## License
+MIT
