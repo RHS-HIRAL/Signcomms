@@ -25,7 +25,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Load model
 MODEL_PATH = "model/trained_model_updated2.keras"
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH, compile=False)
 labels = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ") + ["space", "nothing", "del"]
 
 # MediaPipe

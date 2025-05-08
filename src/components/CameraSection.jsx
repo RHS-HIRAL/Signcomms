@@ -13,11 +13,7 @@ function CameraSection() {
   const startRecognition = async () => {
     cameraSectionRef.current.style.display = 'block';
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: {
-          deviceId: { exact: 1 } // Specify camera index 1
-        }
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({video: true});
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
   
