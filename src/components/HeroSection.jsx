@@ -43,7 +43,7 @@ function HeroSection() {
       <div className="hero-content">
         {/* <h1 className="glow animate-zoom">SignComms</h1> */}
         {/* <h1 className="glow animate-type">SignComms  ...<span className="cursor"> |</span></h1> */}
-        <h1 className="glow animate-type gradient-text">SignComms<span className="cursor">|</span></h1>
+        <h1 className="glow animate-type gradient-text">SignComms</h1>
         <p className="subtitle animate-fade gradient-text">Real-Time Hand Sign to Text & Speech Converter</p>
       </div>
 

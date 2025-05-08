@@ -17,6 +17,9 @@ from gtts import gTTS
 from deep_translator import GoogleTranslator
 from threading import Thread
 from utils.preprocess_new import preprocess_image
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Flask setup
 app = Flask(__name__)
@@ -50,10 +53,40 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/audio')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Data folder and file setup
+DATA_FOLDER = os.path.join(os.getcwd(), 'data')
+os.makedirs(DATA_FOLDER, exist_ok=True)
+current_time_str = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+data_filename = f"data-{current_time_str}.txt"
+data_filepath = os.path.join(DATA_FOLDER, data_filename)
+
+# Helper to append to file
+current_sentence = ""
+def append_to_data_file(text, newline=False):
+    mode = 'a'
+    with open(data_filepath, mode, encoding='utf-8') as f:
+        if newline:
+            f.write(text + '\n')
+        else:
+            f.write(text)
+
+# SQLAlchemy setup
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
+
+# User model
+class User(db.Model):
+    username = db.Column(db.String(80), primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(200), nullable=False)  # Store hashed password
+
+# Create tables (run once)
+with app.app_context():
+    db.create_all()
 
 @socketio.on('frame')
 def handle_browser_frame(data):
-    global sentence, prediction_buffer, last_prediction_time
+    global sentence, prediction_buffer, last_prediction_time, current_sentence
 
     try:
         header, encoded = data.split(",", 1)
@@ -103,10 +136,15 @@ def handle_browser_frame(data):
 
                         if stable_label == "space":
                             sentence += " "
+                            current_sentence += " "
                         elif stable_label == "del":
                             sentence = sentence[:-1]
+                            current_sentence = current_sentence[:-1]
                         elif stable_label != "nothing":
                             sentence += stable_label
+                            current_sentence += stable_label
+                        # Write the current letter to the file (not a new line)
+                        append_to_data_file(stable_label if stable_label not in ["space", "del", "nothing"] else (" " if stable_label == "space" else ""))
 
                         prediction_buffer = []
                         print(f"[DEBUG] Emitting sentence: {sentence}")
@@ -122,7 +160,11 @@ def handle_browser_frame(data):
 
 @socketio.on('reset_sentence')
 def handle_reset_sentence():
-    global sentence, prediction_buffer
+    global sentence, prediction_buffer, current_sentence
+    # Write the current sentence to the file as a new line if not empty
+    if current_sentence.strip():
+        append_to_data_file(current_sentence, newline=True)
+    current_sentence = ""
     sentence = ""
     prediction_buffer = []
     socketio.emit("prediction", {
@@ -184,6 +226,35 @@ def text_to_speech():
 @app.route("/static/audio/<filename>")
 def serve_audio(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+    username = data.get("username")
+    name = data.get("name")
+    password = data.get("password")
+    if not username or not name or not password:
+        return jsonify({"error": "All fields are required."}), 400
+    if User.query.filter_by(username=username).first():
+        return jsonify({"error": "Username already exists."}), 409
+    hashed_password = generate_password_hash(password)
+    user = User(username=username, name=name, password=hashed_password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"message": "Registration successful", "username": username, "name": name})
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    user = User.query.filter_by(username=username).first()
+    if user and check_password_hash(user.password, password):
+        return jsonify({"message": "Login successful", "username": username, "name": user.name})
+    else:
+        return jsonify({"error": "Invalid username or password"}), 401
 
 
 if __name__ == "__main__":

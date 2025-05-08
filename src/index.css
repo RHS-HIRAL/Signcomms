@@ -2,9 +2,9 @@
 
 /* General styles */
 body {
-  background-color: #0f0f0f;
-  color: #00ff00;
-  font-family: 'Quicksand', sans-serif, monospace;
+  background-color: #101010;
+  color: #e5ffe1;
+  font-family: 'Quicksand', monospace, Arial;
   margin: 0;
   padding: 0;
 }
@@ -13,21 +13,18 @@ body {
 .navbar {
   position: fixed;
   display: flex;
+  align-items: center;
   top: 40px;
   right: 40px;
   width: auto;
   z-index: 1000;
-  background-color: #22222200;
-  backdrop-filter: blur(30px);
-  box-shadow: 0px 0px 16px 2px #70e67066;
-  border-radius: 30px;
+  background: rgba(16, 16, 16, 0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 24px #00ff0055;
+  border-radius: 24px;
   padding: 10px 20px;
-  justify-content: space-evenly;
-  gap: 80px;
-  align-content: center;
-  flex-wrap: wrap;
-  flex-direction: row;
-  transition: all 0.3s ease-in-out;
+  gap: 24px;
+  transition: background 0.3s;
 }
 
 /* Menu Icon for smaller screens */
@@ -63,18 +60,20 @@ body {
 }
 
 .menu-btn, .log-btn {
-  color: #ffffff;
+  color: #e5ffe1;
   text-decoration: none;
   font-size: 20px;
   font-weight: 600;
-  padding: 13px;
+  padding: 13px 18px;
   border-radius: 20px;
-  transition: all 0.3s;
+  transition: color 0.3s, box-shadow 0.3s, padding-left 0.1s;
+  background: none;
 }
 
 .menu-btn:hover, .log-btn:hover {
-  text-shadow: 0 0 20px #008000;
   color: #00ff00;
+  background: none;
+  padding-left: 13px;
 }
 
 .log-btn {
@@ -628,4 +627,38 @@ p {
 .scroll-fade.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* General transitions */
+.menu-btn, .log-btn, .btn, .footer-links a {
+  transition: all 0.3s;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .camera-wrapper, .output-card {
+    max-width: 98vw;
+    padding: 1rem;
+  }
+  .navbar {
+    right: 10px;
+    padding: 8px 8px;
+    gap: 10px;
+  }
+}
+@media (max-width: 600px) {
+  .hero-section {
+    margin-top: 2rem;
+  }
+  .glow {
+    font-size: 2rem;
+  }
+  .navbar {
+    top: 10px;
+    right: 0;
+    left: 0;
+    border-radius: 0 0 24px 24px;
+    width: 100vw;
+    justify-content: center;
+  }
 }
