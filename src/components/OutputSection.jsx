@@ -14,7 +14,7 @@ const translations = {
   ko: "안녕하세요"
 };
 
-function OutputSection({ sentence }) {
+function OutputSection({ sentence, clearSentence }) {
   const [language, setLanguage] = useState('en');
   const [translatedText, setTranslatedText] = useState('');
   const [audioUrl, setAudioUrl] = useState(null);
@@ -74,8 +74,23 @@ function OutputSection({ sentence }) {
     <div className="output-card scroll-fade">
       <div className="output">
         <h3>Detected Sign (Sentence):</h3>
-        <div id="detected-sign" className="result">
-          {sentence || "✋ Waiting for input..."}
+        <div id="detected-sign" className="result" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span>{sentence || "✋ Waiting for input..."}</span>
+          <button
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontSize: '1.2rem',
+              cursor: 'pointer',
+              color: '#888',
+              marginLeft: '1rem',
+              display: sentence ? 'inline' : 'none'
+            }}
+            aria-label="Clear sentence"
+            onClick={clearSentence}
+          >
+            ×
+          </button>
         </div>
 
         <div className="translation-section">

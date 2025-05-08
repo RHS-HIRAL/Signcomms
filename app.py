@@ -112,10 +112,25 @@ def handle_browser_frame(data):
                         print(f"[DEBUG] Emitting sentence: {sentence}")
                         socketio.emit("prediction", {
                             "letter": stable_label,
-                            "sentence": sentence
+                            "sentence": sentence,
+                            "confidence": float(np.max(prediction)),
+                            "landmarks": [[lm.x, lm.y] for lm in hand_landmarks.landmark]
                         })
                     else:
                         prediction_buffer.pop(0)
+
+
+@socketio.on('reset_sentence')
+def handle_reset_sentence():
+    global sentence, prediction_buffer
+    sentence = ""
+    prediction_buffer = []
+    socketio.emit("prediction", {
+        "letter": "",
+        "sentence": sentence,
+        "confidence": None,
+        "landmarks": []
+    })
 
 
 @app.route("/")

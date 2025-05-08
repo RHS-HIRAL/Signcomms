@@ -1,29 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
-import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:5000"); // Update to your backend address if needed
-
-function CameraSection() {
+function CameraSection({ socket, latestLetter, confidence, landmarks, sentence }) {
   const videoRef = useRef(null);
   const cameraSectionRef = useRef(null);
-  const [latestLetter, setLatestLetter] = useState('');
-  const [sentence, setSentence] = useState('');
+  const canvasRef = useRef(null);
+  const [fps, setFps] = useState(0);
+  const frameIntervalRef = useRef(null);
+  const lastFrameTimeRef = useRef(null);
 
   const startRecognition = async () => {
     cameraSectionRef.current.style.display = 'block';
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({video: true});
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
-  
-      // Start frame capture
       startSendingFrames();
     } catch (err) {
       console.error("Error accessing camera:", err);
     }
   };
-  
+
   const stopRecognition = () => {
     const stream = videoRef.current.srcObject;
     if (stream) {
@@ -32,41 +29,73 @@ function CameraSection() {
     videoRef.current.srcObject = null;
     cameraSectionRef.current.style.display = 'none';
     clearInterval(frameIntervalRef.current);
+    setFps(0);
   };
-  
-  const frameIntervalRef = useRef(null);
-  
-  const startSendingFrames = () => {
-    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
 
+  const startSendingFrames = () => {
+    if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
+    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-  
     frameIntervalRef.current = setInterval(() => {
       if (!videoRef.current) return;
-  
+      const now = performance.now();
+      if (lastFrameTimeRef.current) {
+        const delta = now - lastFrameTimeRef.current;
+        if (delta > 0) setFps(Math.round(1000 / delta));
+      }
+      lastFrameTimeRef.current = now;
       const video = videoRef.current;
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
       const imageData = canvas.toDataURL('image/jpeg');
-      socket.emit('frame', imageData);
-    }, 300); // Every 300ms
+      if (socket) socket.emit('frame', imageData);
+    }, 300);
   };
-  
-  useEffect(() => {
-    socket.on('connect', () => console.log('[SocketIO] Connected:', socket.id));
-    socket.on('disconnect', () => console.log('[SocketIO] Disconnected'));  
-    socket.on('prediction', (data) => {
-      if (data.letter) setLatestLetter(data.letter);
-      if (data.sentence) setSentence(data.sentence);
-    });
 
+  // Draw hand landmarks and connections on overlay canvas
+  useEffect(() => {
+    if (!landmarks || !canvasRef.current || !videoRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (landmarks.length > 0 && videoRef.current.videoWidth > 0) {
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      // Draw connections (lines)
+      const HAND_CONNECTIONS = [
+        [0,1],[1,2],[2,3],[3,4],      // Thumb
+        [0,5],[5,6],[6,7],[7,8],      // Index
+        [5,9],[9,10],[10,11],[11,12], // Middle
+        [9,13],[13,14],[14,15],[15,16], // Ring
+        [13,17],[17,18],[18,19],[19,20], // Pinky
+        [0,17] // Palm base to pinky base
+      ];
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      HAND_CONNECTIONS.forEach(([start, end]) => {
+        if (landmarks[start] && landmarks[end]) {
+          ctx.beginPath();
+          ctx.moveTo(landmarks[start][0] * canvas.width, landmarks[start][1] * canvas.height);
+          ctx.lineTo(landmarks[end][0] * canvas.width, landmarks[end][1] * canvas.height);
+          ctx.stroke();
+        }
+      });
+      // Draw landmarks (red dots)
+      ctx.fillStyle = '#ff2222';
+      landmarks.forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.arc(x * canvas.width, y * canvas.height, 5, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+  }, [landmarks, videoRef.current?.videoWidth, videoRef.current?.videoHeight]);
+
+  useEffect(() => {
+    // Clean up interval on unmount
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('prediction');
+      if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
     };
   }, []);
 
@@ -79,11 +108,49 @@ function CameraSection() {
           <button className="btn pulse" onClick={startRecognition}>Start Recognition</button>
           <button className="btn pulse" onClick={stopRecognition}>Stop Recognition</button>
         </div>
-
         <div className="camera-section" ref={cameraSectionRef} style={{ display: 'none' }}>
           <h3>Camera View:</h3>
-          <video id="video" ref={videoRef} width="840" height="480" autoPlay muted playsInline></video>
-          <div className="prediction-box">
+          {/* Camera and overlays in a relative container */}
+          <div style={{ position: 'relative', width: 840, height: 480, marginBottom: 16 }}>
+            <video
+              id="video"
+              ref={videoRef}
+              width="840"
+              height="480"
+              autoPlay
+              muted
+              playsInline
+              style={{ display: 'block', width: 840, height: 480, background: '#000', borderRadius: 8 }}
+            ></video>
+            <canvas
+              ref={canvasRef}
+              width={840}
+              height={480}
+              style={{ position: 'absolute', left: 0, top: 0, zIndex: 2, pointerEvents: 'none', width: 840, height: 480 }}
+            />
+            {/* Overlay live letter */}
+            {latestLetter && (
+              <div style={{ position: 'absolute', left: '50%', top: '10%', transform: 'translateX(-50%)', zIndex: 3, fontSize: '3rem', color: '#fff', textShadow: '2px 2px 8px #000' }}>
+                {latestLetter}
+              </div>
+            )}
+            {/* FPS/latency (right) */}
+            <div style={{ position: 'absolute', right: 10, top: 10, zIndex: 4, background: 'rgba(0,0,0,0.5)', color: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '1rem' }}>
+              FPS: {fps}
+            </div>
+            {/* Confidence bar (left) */}
+            {confidence !== null && (
+              <div style={{ position: 'absolute', left: 10, top: 10, zIndex: 4, background: 'rgba(0,0,0,0.5)', color: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '1rem', width: '120px' }}>
+                <div style={{ marginBottom: 2 }}>Confidence</div>
+                <div style={{ background: '#333', borderRadius: '4px', height: '10px', width: '100%' }}>
+                  <div style={{ background: '#4caf50', width: `${Math.round(confidence * 100)}%`, height: '100%', borderRadius: '4px' }}></div>
+                </div>
+                <div style={{ fontSize: '0.9rem', marginTop: 2 }}>{Math.round(confidence * 100)}%</div>
+              </div>
+            )}
+          </div>
+          {/* Prediction box and sentence below camera */}
+          <div className="prediction-box" style={{ marginTop: 8 }}>
             <h4>Detected Letter: <span style={{ fontWeight: 'bold' }}>{latestLetter}</span></h4>
             <h4>Sentence: <span style={{ fontWeight: 'bold' }}>{sentence}</span></h4>
           </div>
