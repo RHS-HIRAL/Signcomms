@@ -13,7 +13,11 @@ function CameraSection() {
   const startRecognition = async () => {
     cameraSectionRef.current.style.display = 'block';
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: {
+          deviceId: { exact: 1 } // Specify camera index 1
+        }
+      });
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
   
@@ -37,7 +41,7 @@ function CameraSection() {
   const frameIntervalRef = useRef(null);
   
   const startSendingFrames = () => {
-    if (video.videoWidth === 0 || video.videoHeight === 0) return;
+    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
@@ -85,7 +89,7 @@ function CameraSection() {
           <video id="video" ref={videoRef} width="840" height="480" autoPlay muted playsInline></video>
           <div className="prediction-box">
             <h4>Detected Letter: <span style={{ fontWeight: 'bold' }}>{latestLetter}</span></h4>
-            {/* <h4>Sentence: <span style={{ fontWeight: 'bold' }}>{sentence}</span></h4> */}
+            <h4>Sentence: <span style={{ fontWeight: 'bold' }}>{sentence}</span></h4>
           </div>
         </div>
       </div>
@@ -94,51 +98,3 @@ function CameraSection() {
 }
 
 export default CameraSection;
-
-
-// import React, { useRef } from 'react';
-// import useScrollAnimation from '../hooks/useScrollAnimation';
-
-// function CameraSection() {
-//   const videoRef = useRef(null);
-//   const cameraSectionRef = useRef(null);
-
-//   const startRecognition = async () => {
-//     cameraSectionRef.current.style.display = 'block';
-//     try {
-//       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-//       videoRef.current.srcObject = stream;
-//       document.getElementById('detected-sign').innerText = "✋ Hand Sign Detected";
-//     } catch (err) {
-//       console.error("Error accessing camera:", err);
-//     }
-//   };
-
-//   const stopRecognition = () => {
-//     const stream = videoRef.current.srcObject;
-//     if (stream) {
-//       stream.getTracks().forEach(track => track.stop());
-//     }
-//     videoRef.current.srcObject = null;
-//     cameraSectionRef.current.style.display = 'none';
-//   };
-
-//   useScrollAnimation();
-//   return (
-//     <div id="camera-section-scroll scroll-fade">
-//     <div className="camera-wrapper">
-//       <div className="button-group">
-//         <button className="btn pulse" onClick={startRecognition}>Start Recognition</button>
-//         <button className="btn pulse" onClick={stopRecognition}>Stop Recognition</button>
-//       </div>
-
-//       <div className="camera-section" ref={cameraSectionRef} style={{ display: 'none' }}>
-//         <h3>Camera View:</h3>
-//         <video id="video" ref={videoRef} width="840" height="480" autoPlay></video>
-//       </div>
-//     </div>
-//     </div>
-//   );
-// }
-
-// export default CameraSection;
