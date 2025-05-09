@@ -1,9 +1,9 @@
 <svg width="30" height="33" viewBox="0 0 30 33" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="33">
-    <path d="M12.0589 0.945659C13.8053 -0.0626144 15.9569 -0.0626158 17.7033 0.945657L26.94 6.27846C28.6864 7.28674 29.7622 9.1501 29.7622 11.1666V21.8323C29.7622 23.8488 28.6864 25.7122 26.94 26.7204L17.7033 32.0532C15.9569 33.0615 13.8053 33.0615 12.0589 32.0533L2.8222 26.7204C1.07582 25.7122 0 23.8488 0 21.8323V11.1666C0 9.1501 1.07582 7.28674 2.8222 6.27846L12.0589 0.945659Z" fill="#303030"/>
+    <path d="M12.0589 0.945659C13.8053 -0.0626144 15.9569 -0.0626158 17.7033 0.945657L26.94 6.27846C28.6864 7.28674 29.7622 9.1501 29.7622 11.1666V21.8323C29.7622 23.8488 28.6864 25.7122 26.94 26.7204L17.7033 32.0532C15.9569 33.0615 13.8053 33.0615 12.0589 32.0533L2.8222 26.7204C1.07582 25.7122 0 23.8488 0 21.8323V11.1666C0 9.1501 1.07582 7.28674 2.8222 6.27846L12.0589 0.945659Z" fill="#222b36"/>
   </mask>
   <g mask="url(#mask0)">
-    <!-- Faceted shapes in neon-green gradient -->
+    <!-- Faceted shapes in dark blue-gray gradient -->
     <path d="M14.877 -0.964844L31.1888 8.45279L22.9339 12.8976L19.5242 11.0377L16.4244 11.3477L8.67499 8.55788L6.81512 11.0377L5.88519 12.2776L4.02533 11.0377L-1.43487 8.45279L14.877 -0.964844Z" fill="url(#grad0)"/>
     <path d="M-0.128906 8.58677L6.19899 11.6554L9.91871 20.6447L9.91871 20.9547L11.1586 22.5046L16.7382 26.8443L14.8802 34.5833L-0.128907 25.9178L-0.128906 8.58677Z" fill="url(#grad1)"/>
     <path d="M19.8341 20.9533L23.8638 12.2739L29.886 8.5877L29.886 25.9187L14.8769 34.5843L14.5645 26.8428L19.8341 20.9533Z" fill="url(#grad2)"/>
@@ -21,20 +21,20 @@
 
   <defs>
     <linearGradient id="grad0" x1="14.5646" y1="0.4985" x2="14.282" y2="11.8208" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00FF00"/>
-      <stop offset="1" stop-color="#008000"/>
+      <stop stop-color="#222b36"/>
+      <stop offset="1" stop-color="#3a4859"/>
     </linearGradient>
     <linearGradient id="grad1" x1="14.8783" y1="23.4345" x2="5.9027" y2="12.6728" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00FF00"/>
-      <stop offset="1" stop-color="#008000"/>
+      <stop stop-color="#222b36"/>
+      <stop offset="1" stop-color="#3a4859"/>
     </linearGradient>
     <linearGradient id="grad2" x1="14.8744" y1="24.673" x2="23.4474" y2="13.2139" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00FF00"/>
-      <stop offset="1" stop-color="#008000"/>
+      <stop stop-color="#222b36"/>
+      <stop offset="1" stop-color="#3a4859"/>
     </linearGradient>
     <linearGradient id="grad3" x1="14.8763" y1="6.0820" x2="14.8763" y2="25.9206" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00FF00"/>
-      <stop offset="1" stop-color="#008000"/>
+      <stop stop-color="#222b36"/>
+      <stop offset="1" stop-color="#3a4859"/>
     </linearGradient>
   </defs>
 </svg>

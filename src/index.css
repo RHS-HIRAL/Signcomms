@@ -148,7 +148,7 @@ body {
   top: 30px;
   left: 50px;
   z-index: 1000;
-  background: url(images/s-bg.svg) no-repeat center center;
+  /* background: url(images/s-bg.svg) no-repeat center center; */
   background-size:contain;
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import logoGptCropped from '../images/logo_gpt_cropped.png';
 
 function Navbar({ user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,7 +13,7 @@ function Navbar({ user, onLogout }) {
 
   const handleLogout = () => {
     if (onLogout) onLogout();
-    navigate('/login');
+    navigate('/');
   };
 
   const navButtonStyle = {
@@ -30,13 +31,10 @@ function Navbar({ user, onLogout }) {
   return (
     <>
       {/* Logo */}
-      <div className="logo">
-        <a href="/">
-          <div id = "logo-div">
-          {/* <img src="src/images/logo2.svg" alt="SignComms Logo" className="logo-img" /> */}
-          <img src="src/images/s.svg" alt="SignComms Logo" className="logo-img" />
-          </div>
-        </a>
+      <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate(user ? '/' : '/') }>
+        <div id = "logo-div">
+          <img src={logoGptCropped} alt="SignComms Logo" className="logo-img" />
+        </div>
       </div>
 
       {/* Menu icon for smaller screens */}

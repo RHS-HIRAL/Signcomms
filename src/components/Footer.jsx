@@ -1,4 +1,5 @@
 import React from 'react';
+import logoGptCropped from '../images/logo_gpt_cropped.png';
 
 function Footer() {
   const scrollToTop = () => {
@@ -10,7 +11,7 @@ function Footer() {
       <div className="footer-content">
         {/* Logo */}
         <div className="footer-logo">
-          <img src="src/images/logo2.svg" alt="SignComms Logo" className="footer-logo-img" />
+          <img src={logoGptCropped} alt="SignComms Logo" className="footer-logo-img" />
         </div>
 
         {/* Links */}

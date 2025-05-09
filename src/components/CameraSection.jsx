@@ -1,18 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
+import cameraSwitchIcon from '../images/camera-switch.png';
 
-function CameraSection({ socket, latestLetter, confidence, landmarks, sentence }) {
+function CameraSection({ socket, latestLetter, confidence, landmarks }) {
   const videoRef = useRef(null);
   const cameraSectionRef = useRef(null);
   const canvasRef = useRef(null);
   const [fps, setFps] = useState(0);
   const frameIntervalRef = useRef(null);
   const lastFrameTimeRef = useRef(null);
+  const [devices, setDevices] = useState([]);
+  const [currentDevice, setCurrentDevice] = useState(0);
 
+  // Get available video input devices
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then((allDevices) => {
+      const videoDevices = allDevices.filter((d) => d.kind === 'videoinput');
+      setDevices(videoDevices);
+    });
+  }, []);
+
+  // Start video stream from selected device
   const startRecognition = async () => {
     cameraSectionRef.current.style.display = 'block';
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: devices.length > 0 ? { exact: devices[currentDevice].deviceId } : undefined } });
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
       startSendingFrames();
@@ -20,6 +32,34 @@ function CameraSection({ socket, latestLetter, confidence, landmarks, sentence }
       console.error("Error accessing camera:", err);
     }
   };
+
+  // Switch camera
+  const handleSwitchCamera = async () => {
+    if (devices.length < 2) return;
+    const nextDevice = (currentDevice + 1) % devices.length;
+    setCurrentDevice(nextDevice);
+    // Stop current stream
+    if (videoRef.current && videoRef.current.srcObject) {
+      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    }
+    // Start new stream
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: devices[nextDevice].deviceId } } });
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+      startSendingFrames();
+    } catch (err) {
+      console.error("Error switching camera:", err);
+    }
+  };
+
+  // If currentDevice changes, restart stream if camera is open
+  useEffect(() => {
+    if (cameraSectionRef.current && cameraSectionRef.current.style.display === 'block') {
+      startRecognition();
+    }
+    // eslint-disable-next-line
+  }, [currentDevice]);
 
   const stopRecognition = () => {
     const stream = videoRef.current.srcObject;
@@ -122,6 +162,32 @@ function CameraSection({ socket, latestLetter, confidence, landmarks, sentence }
               playsInline
               style={{ display: 'block', width: 840, height: 480, background: '#000', borderRadius: 8 }}
             ></video>
+            {/* Camera switch button */}
+            {devices.length > 1 && (
+              <button
+                onClick={handleSwitchCamera}
+                style={{
+                  position: 'absolute',
+                  bottom: 16,
+                  right: 16,
+                  zIndex: 10,
+                  background: '#7CFC98', // light green
+                  border: 'none',
+                  borderRadius: '50%',
+                  padding: 8,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  transition: 'background 0.2s',
+                  outline: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Switch Camera"
+              >
+                <img src={cameraSwitchIcon} alt="Switch Camera" style={{ width: 28, height: 28 }} />
+              </button>
+            )}
             <canvas
               ref={canvasRef}
               width={840}
@@ -150,10 +216,10 @@ function CameraSection({ socket, latestLetter, confidence, landmarks, sentence }
             )}
           </div>
           {/* Prediction box and sentence below camera */}
-          <div className="prediction-box" style={{ marginTop: 8 }}>
+          {/* <div className="prediction-box" style={{ marginTop: 8 }}>
             <h4>Detected Letter: <span style={{ fontWeight: 'bold' }}>{latestLetter}</span></h4>
             <h4>Sentence: <span style={{ fontWeight: 'bold' }}>{sentence}</span></h4>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
