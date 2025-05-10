@@ -119,14 +119,26 @@ def handle_browser_frame(data):
             hand_image = preprocess_image(hand_pil)
             hand_image = np.expand_dims(hand_image, axis=0)
 
+            prediction = model.predict(hand_image, verbose=0)[0]
+            predicted_class = np.argmax(prediction)
+            predicted_label = labels[predicted_class]
+
+            # Get top 3 probable letters and their confidences
+            top_indices = np.argsort(prediction)[::-1][:3]
+            top_letters = [
+                {"letter": labels[i], "confidence": float(prediction[i])}
+                for i in top_indices
+            ]
+
+            # Emit live prediction for every frame
+            socketio.emit("live_prediction", {
+                "live_letter": predicted_label,
+                "top_letters": top_letters,
+                # "timestamp": time.time(),
+            })
+
             current_time = time.time()
             if current_time - last_prediction_time > min_time_between_predictions:
-                prediction = model.predict(hand_image, verbose=0)
-                predicted_class = np.argmax(prediction)
-                predicted_label = labels[predicted_class]
-
-                print(f"[DEBUG] Predicted: {predicted_label}")
-
                 prediction_buffer.append(predicted_label)
 
                 if len(prediction_buffer) >= buffer_size:
