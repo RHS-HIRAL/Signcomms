@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 
-def preprocess_image(image, target_size=(64, 64)):
+def preprocess_image(image, target_size=(128, 128)):
     # Convert PIL image to a NumPy array
     image = np.array(image)
 
@@ -20,7 +20,7 @@ def preprocess_image(image, target_size=(64, 64)):
     
     return image
 
-def load_dataset(dataset_path, img_size=(64, 64)):
+def load_dataset(dataset_path, img_size=(128, 128)):
     from tensorflow.keras.preprocessing.image import load_img, img_to_array
     data = []
     labels = []

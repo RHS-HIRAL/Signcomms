@@ -29,7 +29,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Load model
-MODEL_PATH = "model/trained_model_updated2.keras"
+MODEL_PATH = "model/sign_cnn_model.h5"
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
 labels = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ") + ["space", "nothing", "del"]
 
@@ -270,4 +270,5 @@ def login():
 
 
 if __name__ == "__main__":
+    print("Model input shape:", model.input_shape)
     socketio.run(app, host="0.0.0.0", port=5000)
